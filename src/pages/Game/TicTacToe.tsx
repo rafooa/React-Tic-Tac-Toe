@@ -1,8 +1,12 @@
-import { Grid, Box, Button, Typography } from "@mui/material";
+import { Grid, Box, Button, Typography, TextField, Stack } from "@mui/material";
 import { useRef, useState } from "react";
 import { Item } from "./Item";
+import store from "../../store";
+import { observer } from "mobx-react-lite";
 
-export const TicTacToe = () => {
+const initBoard = ["", "", "", "", "", "", "", "", ""];
+
+export const TicTacToe = observer(() => {
 	const [currPlayer, setcurrPlayer] = useState(1);
 	const [turns, setTurns] = useState(1);
 	const [currTurn, setcurrTurn] = useState(false);
@@ -12,15 +16,13 @@ export const TicTacToe = () => {
 	const p2Moves = useRef<Array<number>>([]);
 	const [gameEnd, setgameEnd] = useState(false);
 
-	const playerMove = (e: any) => {
+	const playerMove = (index: number) => {
 		if (currPlayer === 1) {
-			e.target.innerText = "O";
-			e.target.disabled = true;
-			p1Moves.current.push(Number(e.target.value));
+			store.board[index] = "O";
+			p1Moves.current.push(Number(index + 1));
 		} else if (currPlayer === 2) {
-			e.target.innerText = "X";
-			e.target.disabled = true;
-			p2Moves.current.push(Number(e.target.value));
+			store.board[index] = "X";
+			p2Moves.current.push(Number(index + 1));
 		}
 		setTurns(turns + 1);
 		if (gameWon()) {
@@ -48,10 +50,11 @@ export const TicTacToe = () => {
 		];
 
 		for (let i = 0; i < 8; i++) {
-			if (
-				winCon[i].every((val) => p1Moves.current.includes(val)) ||
-				winCon[i].every((val) => p2Moves.current.includes(val))
-			) {
+			if (winCon[i].every((val) => p1Moves.current.includes(val))) {
+				store.players[0].score++;
+				return true;
+			} else if (winCon[i].every((val) => p2Moves.current.includes(val))) {
+				store.players[1].score++;
 				return true;
 			}
 		}
@@ -59,11 +62,40 @@ export const TicTacToe = () => {
 		return false;
 	};
 
+	const newGame = () => {
+		store.board = initBoard;
+		setcurrPlayer(1);
+		setTurns(1);
+		setcurrTurn(false);
+		setTie(true);
+		setWin(true);
+		p1Moves.current = [];
+		p2Moves.current = [];
+		setgameEnd(false);
+	};
+
 	const resetGame = () => {
 		window.location.reload();
 	};
 	return (
 		<>
+			<Stack direction="row" spacing={2}>
+				{store.players.map((player) => (
+					<Grid item xs={8} key={player.id} mb={2} mt={0}>
+						<TextField
+							sx={{ display: "inline" }}
+							size="small"
+							label={"Player " + player.id}
+							value={player.name}
+							variant="outlined"
+							onChange={(evt: any) => (player.name = evt.target.value)}
+						/>
+						<Typography sx={{ display: "inline" }} variant="h4">
+							: {player.score}
+						</Typography>
+					</Grid>
+				))}
+			</Stack>
 			<Typography variant="h3" gutterBottom>
 				React Tic Tac Toe
 			</Typography>
@@ -73,25 +105,32 @@ export const TicTacToe = () => {
 						<Grid item xs={4} key={index}>
 							<Item
 								value={index + 1}
-								onClick={playerMove}
+								onClick={() => playerMove(index)}
 								sx={
-									gameEnd
+									store.board[index] !== ""
+										? {
+												pointerEvents: "none",
+												backgroundColor: "#fff",
+										  }
+										: gameEnd
 										? { pointerEvents: "none" }
 										: { pointerEvents: "auto" }
 								}
-							></Item>
+							>
+								{store.board[index]}
+							</Item>
 						</Grid>
 					))}
 				</Grid>
 			</Box>
 			<Typography variant="h4" gutterBottom hidden={currTurn}>
-				It is currently Player: {currPlayer}'s turn!
+				It is currently {store.players[currPlayer - 1].name}'s turn!
 			</Typography>
 			<Typography variant="h4" gutterBottom hidden={tie}>
 				Game ended in a tie!
 			</Typography>
 			<Typography variant="h4" gutterBottom hidden={win}>
-				Player {currPlayer} has won the game!
+				{store.players[currPlayer - 1].name} has won the game!
 			</Typography>
 			<Typography variant="h5">
 				<Button
@@ -105,9 +144,23 @@ export const TicTacToe = () => {
 						},
 					}}
 				>
-					Reset Game
+					Reset Score
+				</Button>
+				<Button
+					onClick={newGame}
+					sx={{
+						border: "1px solid black",
+						color: "black",
+						backgroundColor: "#fff",
+						":hover": {
+							backgroundColor: "#03fc49",
+						},
+						marginLeft: 2,
+					}}
+				>
+					New Game
 				</Button>
 			</Typography>
 		</>
 	);
-};
+});

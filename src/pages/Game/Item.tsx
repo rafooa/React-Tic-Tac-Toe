@@ -15,8 +15,4 @@ export const Item = styled(Button)(({ theme }) => ({
 	":hover": {
 		backgroundColor: "#fff",
 	},
-	":disabled": {
-		backgroundColor: "#fff",
-		pointerEvents: "none",
-	},
 }));

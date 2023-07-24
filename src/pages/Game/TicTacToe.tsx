@@ -75,7 +75,9 @@ export const TicTacToe = observer(() => {
 	};
 
 	const resetGame = () => {
-		window.location.reload();
+		store.players[0].score = 0;
+		store.players[1].score = 0;
+		newGame();
 	};
 	return (
 		<>

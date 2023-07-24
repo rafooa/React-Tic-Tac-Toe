@@ -23,7 +23,6 @@ interface Player {
 
 class Players {
 	players: Player[] = initPlayers;
-	newPlayer: string = "";
 	board: string[] = initBoard;
 
 	constructor() {

@@ -2,7 +2,7 @@ import { Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 export const Item = styled(Button)(({ theme }) => ({
-	backgroundColor: "#1A2027",
+	backgroundColor: "#fff",
 	...theme.typography.body2,
 	padding: theme.spacing(2),
 	textAlign: "center",
@@ -13,6 +13,6 @@ export const Item = styled(Button)(({ theme }) => ({
 	fontSize: 70,
 	border: "1px solid black",
 	":hover": {
-		backgroundColor: "#fff",
+		backgroundColor: "#87f583",
 	},
 }));

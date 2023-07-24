@@ -1,8 +1,8 @@
-import { Grid, Box, Button, Typography, TextField, Stack } from "@mui/material";
+import { Grid, Button, Typography, TextField, Stack } from "@mui/material";
 import { useRef, useState } from "react";
-import { Item } from "./Item";
 import store from "../../store";
 import { observer } from "mobx-react-lite";
+import { GameGrid } from "../../components";
 
 const initBoard = ["", "", "", "", "", "", "", "", ""];
 
@@ -81,50 +81,36 @@ export const TicTacToe = observer(() => {
 	};
 	return (
 		<>
+			<Typography variant="h3" gutterBottom>
+				React Tic Tac Toe
+			</Typography>
 			<Stack direction="row" spacing={2}>
-				{store.players.map((player) => (
-					<Grid item xs={8} key={player.id} mb={2} mt={0}>
+				{store.players.map((player, index: number) => (
+					<Grid item key={index} mb={2}>
 						<TextField
-							sx={{ display: "inline" }}
+							focused
+							color="secondary"
+							sx={{
+								display: "inline",
+								input: {
+									color: "white",
+								},
+							}}
 							size="small"
 							label={"Player " + player.id}
 							value={player.name}
 							variant="outlined"
 							onChange={(evt: any) => (player.name = evt.target.value)}
 						/>
-						<Typography sx={{ display: "inline" }} variant="h4">
+						<Typography sx={{ display: "inline" }} variant="h5">
 							: {player.score}
 						</Typography>
 					</Grid>
 				))}
 			</Stack>
-			<Typography variant="h3" gutterBottom>
-				React Tic Tac Toe
-			</Typography>
-			<Box sx={{ flexGrow: 1, width: 300, maxHeight: 350 }}>
-				<Grid container spacing={{ xs: 0 }}>
-					{Array.from(Array(9)).map((_, index) => (
-						<Grid item xs={4} key={index}>
-							<Item
-								value={index + 1}
-								onClick={() => playerMove(index)}
-								sx={
-									store.board[index] !== ""
-										? {
-												pointerEvents: "none",
-												backgroundColor: "#fff",
-										  }
-										: gameEnd
-										? { pointerEvents: "none" }
-										: { pointerEvents: "auto" }
-								}
-							>
-								{store.board[index]}
-							</Item>
-						</Grid>
-					))}
-				</Grid>
-			</Box>
+
+			<GameGrid gameEnd={gameEnd} playerMove={playerMove} />
+
 			<Typography variant="h4" gutterBottom hidden={currTurn}>
 				It is currently {store.players[currPlayer - 1].name}'s turn!
 			</Typography>

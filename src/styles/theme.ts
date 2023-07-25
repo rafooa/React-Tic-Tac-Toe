@@ -21,6 +21,7 @@ export const appTheme = createTheme({
 			color: "#87f583",
 			":hover": {
 				color: "#fff",
+				fontSize: 35,
 			},
 		},
 		h3: {

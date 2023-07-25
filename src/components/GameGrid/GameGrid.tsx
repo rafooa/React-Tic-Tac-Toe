@@ -1,6 +1,6 @@
 import { Grid, Box } from "@mui/material";
 import { Item } from "../Item";
-import store from "../../store";
+import { store } from "../../store/gameStore/store";
 
 interface IProps {
 	gameEnd: boolean;

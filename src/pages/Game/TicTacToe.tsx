@@ -1,10 +1,8 @@
 import { Grid, Button, Typography, TextField, Stack } from "@mui/material";
 import { useRef, useState } from "react";
-import store from "../../store";
 import { observer } from "mobx-react-lite";
 import { GameGrid } from "../../components";
-
-const initBoard = ["", "", "", "", "", "", "", "", ""];
+import { store } from "../../store/gameStore/store";
 
 export const TicTacToe = observer(() => {
 	const [currPlayer, setcurrPlayer] = useState(1);
@@ -18,10 +16,10 @@ export const TicTacToe = observer(() => {
 
 	const playerMove = (index: number) => {
 		if (currPlayer === 1) {
-			store.board[index] = "O";
+			store.changeSquare(index, "O");
 			p1Moves.current.push(Number(index + 1));
 		} else if (currPlayer === 2) {
-			store.board[index] = "X";
+			store.changeSquare(index, "X");
 			p2Moves.current.push(Number(index + 1));
 		}
 		setTurns(turns + 1);
@@ -51,10 +49,10 @@ export const TicTacToe = observer(() => {
 
 		for (let i = 0; i < 8; i++) {
 			if (winCon[i].every((val) => p1Moves.current.includes(val))) {
-				store.players[0].score++;
+				store.addScore(0);
 				return true;
 			} else if (winCon[i].every((val) => p2Moves.current.includes(val))) {
-				store.players[1].score++;
+				store.addScore(1);
 				return true;
 			}
 		}
@@ -63,7 +61,7 @@ export const TicTacToe = observer(() => {
 	};
 
 	const newGame = () => {
-		store.board = initBoard;
+		store.resetBoard();
 		setcurrPlayer(1);
 		setTurns(1);
 		setcurrTurn(false);
@@ -75,8 +73,7 @@ export const TicTacToe = observer(() => {
 	};
 
 	const resetGame = () => {
-		store.players[0].score = 0;
-		store.players[1].score = 0;
+		store.resetScore();
 		newGame();
 	};
 	return (
